@@ -5,8 +5,8 @@ const router = express.Router();
 
 router.post("/critical", criticalDataController.createHealthData);
 
-router.get('/critical/:email', healthDataController.getHealthDataByStudent);
+router.get('/critical/:email', criticalDataController.getHealthDataByStudent);
 
-router.get('/critical', healthDataController.getCriticalHealthData);
+router.get('/critical', criticalDataController.getCriticalHealthData);
 
 module.exports = router;
