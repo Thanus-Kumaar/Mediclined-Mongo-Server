@@ -1,6 +1,6 @@
 const express = require("express");
 const connectDB = require("./database/config.js");
-const healthDataRoutes = require("./routes/healthDataRoutes");
+const healthDataRoutes = require("./routes/criticalDataRoute.js");
 require("dotenv").config();
 
 const app = express();
