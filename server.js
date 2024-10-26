@@ -1,6 +1,7 @@
 const express = require("express");
 const connectDB = require("./database/config.js");
 const healthDataRoutes = require("./routes/criticalDataRoute.js");
+const prescriptionRoutes = require("./routes/prescriptionRoute.js");
 require("dotenv").config();
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api", healthDataRoutes);
+app.use("/api", prescriptionRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
