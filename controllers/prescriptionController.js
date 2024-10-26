@@ -20,10 +20,6 @@ const prescriptionController = {
       return res.status(400).json({ error: "Diagnosis is required" });
     }
 
-    if (tests && !Array.isArray(tests)) {
-      return res.status(400).json({ error: "Tests must be an array" });
-    }
-
     if (medicines && !Array.isArray(medicines)) {
       return res.status(400).json({ error: "Medicines must be an array" });
     }
