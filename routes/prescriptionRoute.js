@@ -1,9 +1,10 @@
 const express = require("express");
 const prescriptionController = require("../controllers/prescriptionController.js");
+const transformIncomingData = require("../middleware/prescriptionMiddleware.js");
 
 const router = express.Router();
 
-router.post("/prescription", prescriptionController.addPrescription);
+router.post("/prescription",  prescriptionController.addPrescription);
 
 router.get(
   "/prescription/email/:email",

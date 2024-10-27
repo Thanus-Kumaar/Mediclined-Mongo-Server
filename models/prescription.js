@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const MedicineSchema = new mongoose.Schema({
   name: {
@@ -11,12 +11,15 @@ const MedicineSchema = new mongoose.Schema({
     min: 1,
   },
   timing: {
-    MN: { type: String, default: "" },
-    AF: { type: String, default: "" },
+    NB: { type: String, default: "" },
+    MA: { type: String, default: "" },
+    AB: { type: String, default: "" },
+    AA: { type: String, default: "" },
     NT: { type: String, default: "" },
+    NA: { type: String, default: "" },
   },
   strengthAndForm: {
-    type: String,
+    type: String, // Changed from array to single string
     required: true,
   },
 });
@@ -25,12 +28,11 @@ const PrescriptionSchema = new mongoose.Schema({
   studentEmail: {
     type: String,
     required: true,
-    match: /.+\@.+\..+/
   },
   rollNumber: {
     type: String,
     required: true,
-    unique: true,
+    unique: false,
   },
   diagnosis: {
     type: String,
@@ -48,6 +50,6 @@ const PrescriptionSchema = new mongoose.Schema({
   },
 });
 
-const Prescription = mongoose.model('Prescription', PrescriptionSchema);
+const Prescription = mongoose.model("Prescription", PrescriptionSchema);
 
 module.exports = Prescription;

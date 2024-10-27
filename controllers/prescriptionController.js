@@ -38,7 +38,9 @@ const prescriptionController = {
       const savedPrescription = await newPrescription.save();
       return res.status(201).json(savedPrescription);
     } catch (error) {
-      return res.status(500).json({ message: "Error adding prescription", error });
+      return res
+        .status(500)
+        .json({ message: "Error adding prescription", error });
     }
   },
 
@@ -55,28 +57,47 @@ const prescriptionController = {
       const prescriptions = await Prescription.find({ studentEmail: email });
       return res.status(200).json(prescriptions);
     } catch (error) {
-      return res.status(500).json({ message: "Error fetching prescriptions", error });
+      return res
+        .status(500)
+        .json({ message: "Error fetching prescriptions", error });
     }
   },
 
   // Controller to get prescriptions by roll number
   getPrescriptionsByRollNumber: async (req, res) => {
     const { rollNumber } = req.params;
-  
+    const { startDate, endDate } = req.query;
+
     // Validate roll number
     if (!rollNumber) {
       return res.status(400).json({ error: "Roll number is required" });
     }
-  
+
+    // Validate dates
+    if (!startDate || !endDate) {
+      return res
+        .status(400)
+        .json({ error: "Start and end dates are required" });
+    }
+
     try {
+      // Convert query parameters to Date objects
+      const startDateTime = new Date(startDate);
+      const endDateTime = new Date(endDate);
+
       // Use a regular expression to find all roll numbers that match the given partial roll number
       const prescriptions = await Prescription.find({
-        rollNumber: { $regex: new RegExp(rollNumber, 'i') } // 'i' for case-insensitive search
-      });
-  
+        rollNumber: { $regex: new RegExp(rollNumber, "i") },
+        createdAt: {
+          $gte: startDateTime,
+          $lte: endDateTime,
+        },
+      }).sort({ createdAt: -1 }); // Sort by creation date in descending order
+
       return res.status(200).json(prescriptions);
     } catch (error) {
-      return res.status(500).json({ message: "Error fetching prescriptions", error });
+      console.error("Error fetching prescriptions:", error);
+      return res.status(500).json({ message: "Error fetching prescriptions" });
     }
   },
 
@@ -85,13 +106,24 @@ const prescriptionController = {
     const { identifier, date } = req.query; // identifier can be email or roll number
 
     // Validate identifier
-    if (!identifier || (!validator.isEmail(identifier) && !validator.isNumeric(identifier))) {
-      return res.status(400).json({ error: "Invalid identifier. It must be an email or roll number." });
+    if (
+      !identifier ||
+      (!validator.isEmail(identifier) && !validator.isNumeric(identifier))
+    ) {
+      return res
+        .status(400)
+        .json({
+          error: "Invalid identifier. It must be an email or roll number.",
+        });
     }
 
     // Validate date
     if (!date || !validator.isISO8601(date)) {
-      return res.status(400).json({ error: "Invalid date format. It must be a valid ISO8601 date." });
+      return res
+        .status(400)
+        .json({
+          error: "Invalid date format. It must be a valid ISO8601 date.",
+        });
     }
 
     try {
@@ -101,14 +133,22 @@ const prescriptionController = {
 
       const prescriptions = await Prescription.find({
         $or: [
-          { studentEmail: identifier, createdAt: { $gte: startDate, $lt: endDate } },
-          { rollNumber: identifier, createdAt: { $gte: startDate, $lt: endDate } },
+          {
+            studentEmail: identifier,
+            createdAt: { $gte: startDate, $lt: endDate },
+          },
+          {
+            rollNumber: identifier,
+            createdAt: { $gte: startDate, $lt: endDate },
+          },
         ],
       });
 
       return res.status(200).json(prescriptions);
     } catch (error) {
-      return res.status(500).json({ message: "Error fetching prescriptions", error });
+      return res
+        .status(500)
+        .json({ message: "Error fetching prescriptions", error });
     }
   },
 };
